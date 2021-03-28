@@ -102,3 +102,5 @@ dist
 
 # TernJS port file
 .tern-port
+backend/database/memory.db
+backend/database/memory.db-journal
