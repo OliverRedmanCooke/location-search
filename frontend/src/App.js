@@ -4,19 +4,23 @@ import { getList } from "./services/locations";
 import "./App.css";
 
 function App() {
+
+  const [alert, setAlert] = useState(false);
   const [list, setList] = useState([]);
   const [itemInput, setItemInput] = useState('');
 
-  useEffect(() => {
-    let mounted = true;
-    return () => (mounted = false);
-  }, []);
-
   const handleSubmit = (e) => {
+
+    setAlert(false)
+
     e.preventDefault();
-    getList(itemInput).then((items) => {
-        setList(items);
-    });
+    getList(itemInput).then((res) => {
+        setList(res.data);
+    }).catch(err =>{
+      setList([])
+      setAlert(true)
+      console.log(err)
+    })
   };
 
   return (
@@ -26,15 +30,15 @@ function App() {
       </header>
       <form onSubmit={handleSubmit} >
         <label>
-          <p>New Item</p>
-          <input onChange={event => setItemInput(event.target.value)} value={itemInput} type="text" />
+          <input onChange={event => setItemInput(event.target.value)} value={itemInput} type="text" placeholder="Search for a location" />
         </label>
         <button type="submit">Submit</button>
       </form>
-      <ul>
+      <ul className="location-list">
         {list.map((item) => (
-          <li>{item.name}</li>
+          <li key={item.geonameid} >{item.name}</li>
         ))}
+         {alert && <h2> There was an error getting these results</h2>}
       </ul>
     </div>
   );
