@@ -5,7 +5,6 @@
   "main": "app.js",
   "scripts": {
     "start": "pm2 start app.js",
-    "test": "test",
     "dev": "nodemon app.js"
   },
   "author": "Oliver Cooke",
