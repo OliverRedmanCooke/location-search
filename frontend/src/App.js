@@ -10,7 +10,7 @@ function App() {
   const [list, setList] = useState([]);
   const [itemInput, setItemInput] = useState("");
 
-  // PREVENTS RERENDER FLICKERING AS USER TYPES IN SEARCH
+  // Prevent UI from flickering while typing
   const sleep = (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
@@ -31,6 +31,7 @@ function App() {
 
       if (itemInput.length > 2) {
 
+        // Add a delay between api calls and typing.
         await sleep(350);
         if (currentQuery) {
           
