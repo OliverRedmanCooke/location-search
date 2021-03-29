@@ -10,28 +10,58 @@ function App() {
   const [list, setList] = useState([]);
   const [itemInput, setItemInput] = useState("");
 
+  // PREVENTS RERENDER FLICKERING AS USER TYPES IN SEARCH
+  const sleep = (ms) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (itemInput.length > 2) {
-      // reset these values on submit
-      setloading(true);
-      setAlert(false);
-      getList(itemInput)
-        .then((res) => {
-          setList(res.data);
-          setloading(false);
-        })
-        .catch((err) => {
-          setList([]);
-          setAlert(true);
-          setloading(false);
-          console.log(err);
-        });
-    } else {
-      setAlert(true);
-      setAlertMessage("You need to enter more than two characters to use this search function")
-    }
   };
+
+  useEffect(() => {
+    let currentQuery = true;
+
+    const loadList = async () => {
+      setAlert(false);
+      setAlertMessage(
+        "There was an error getting the results, please try again later"
+      );
+
+      if (itemInput.length > 2) {
+
+        await sleep(350);
+        if (currentQuery) {
+          
+          getList(itemInput)
+            .then((res) => {
+              setList(res.data);
+              setloading(false);
+            })
+            .catch((err) => {
+              setList([]);
+              setAlert(true);
+              setloading(false);
+              console.log(err);
+            });
+        }
+      } else {
+
+        setList([]);
+        setAlert(true);
+        setAlertMessage(
+          "You need to enter more than two characters to start your search"
+        );
+      }
+    };
+
+    loadList();
+
+    return () => {
+      currentQuery = false;
+    };
+  }, [itemInput]);
 
   return (
     <div className="App">
@@ -41,13 +71,13 @@ function App() {
       <form onSubmit={handleSubmit}>
         <label>
           <input
-            onChange={(event) => setItemInput(event.target.value)}
+            className="search"
+            onChange={(e) => setItemInput(e.target.value)}
             value={itemInput}
             type="text"
-            placeholder="Search for a location"
+            placeholder="Type to begin your search"
           />
         </label>
-        <button type="submit">Submit</button>
       </form>
       <ul className="location-list">
         {loading && <h2> Getting results....</h2>}
